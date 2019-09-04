@@ -13,7 +13,7 @@ import spock.lang.Unroll
 class CardMoveChecksSpec extends Specification {
 
     @Unroll
-    def "Invalid input calling checkPlayerInput whith #input will throw #exception.getSimpleName() with message |#message| when testing: #testcase" () {
+    def "Invalid input calling checkPlayerInput with #input will throw #exception.getSimpleName() with message |#message| when testing: #testcase" () {
         when:
         CardMoveChecks.checkPlayerInput(input)
         then:
