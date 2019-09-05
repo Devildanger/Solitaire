@@ -1,12 +1,14 @@
 package nl.quintor.solitaire.game;
 
 import nl.quintor.solitaire.game.moves.Help;
+import nl.quintor.solitaire.game.moves.Move;
 import nl.quintor.solitaire.game.moves.ex.MoveException;
 import nl.quintor.solitaire.models.card.Card;
 import nl.quintor.solitaire.models.card.Rank;
 import nl.quintor.solitaire.models.card.Suit;
 import nl.quintor.solitaire.models.deck.Deck;
 import nl.quintor.solitaire.models.deck.DeckType;
+import org.assertj.core.condition.Not;
 
 /**
  * Library class for card move legality checks. The class is not instantiable, all constructors are private and all methods are
@@ -79,6 +81,27 @@ public class CardMoveChecks {
      */
     public static void cardLevelChecks(Deck targetDeck, Card cardToAdd) throws MoveException {
         // TODO: Write implementation
+        if (targetDeck.getDeckType() != DeckType.STACK && targetDeck.getDeckType() != DeckType.COLUMN) {
+            throw new MoveException("Target deck is neither Stack nor Column.");
+        }
+        if (cardToAdd.getRank() != Rank.ACE && targetDeck.getDeckType() == DeckType.STACK && targetDeck.toArray().length == 0){
+            throw new MoveException("An Ace has to be the first card of a Stack Pile");
+        }
+        if (targetDeck.getDeckType() == DeckType.STACK && targetDeck.get(0).getRank().ordinal() != cardToAdd.getRank().ordinal()+1 && targetDeck.get(0).getSuit() == cardToAdd.getSuit()){
+            throw new MoveException("Stack Piles hold same-suit cards of increasing Rank from Ace to King");
+        }
+        if (targetDeck.getDeckType() == DeckType.STACK && targetDeck.get(0).getSuit() != cardToAdd.getSuit()) {
+            throw new MoveException("Stack Piles can only contain same-suit cards");
+        }
+        if (targetDeck.getDeckType() == DeckType.COLUMN && targetDeck.toArray().length == 0 && cardToAdd.getRank() != Rank.KING){
+            throw new MoveException("A King has to be the first card of a Column");
+        }
+        if (targetDeck.getDeckType() == DeckType.COLUMN && !opposingColor(targetDeck.get(0),cardToAdd)){
+            throw new MoveException("Column cards have te alternate colors (red and black)");
+        }
+        if (targetDeck.getDeckType() == DeckType.COLUMN && targetDeck.get(0).getRank().ordinal() != cardToAdd.getRank().ordinal()+1 ){
+            throw new MoveException("Columns hold alternating-color cards of decreasing rank from King to Two");
+        }
     }
 
     // Helper methods
